@@ -1,14 +1,11 @@
 import pandas as pd
 import os
 
-# Print current directory for verification
 print("Current directory:", os.getcwd())
 print("Files in current directory:", os.listdir())
 print("Files in gallstone-data:", os.listdir("./gallstone-data"))
 
-# Try to load the downloaded Excel file
 try:
-    # Try with explicit engine
     file_path = './gallstone-data/dataset-uci.xlsx'
     print(f"Attempting to load: {file_path}")
     print(f"File exists: {os.path.exists(file_path)}")

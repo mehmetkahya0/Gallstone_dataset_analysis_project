@@ -7,27 +7,21 @@ from zipfile import ZipFile
 from io import BytesIO
 import requests
 
-# Turkish to English title function
 def tr_title(title):
-    """Function to handle Turkish titles in plots"""
     return title
 
-# Setting the style for plots
 plt.style.use('ggplot')
 sns.set(font_scale=1.2)
 sns.set_style("whitegrid")
 
-# Create output directory for saving graphs
 os.makedirs('figures', exist_ok=True)
 
-# Try to download the dataset directly from UCI repository if local file has issues
 def download_dataset():
     try:
         print("Attempting to download the dataset from UCI repository...")
         url = "https://archive.ics.uci.edu/static/public/1150/gallstone-1.zip"
         response = requests.get(url)
         with ZipFile(BytesIO(response.content)) as zip_file:
-            # Extract the Excel file
             zip_file.extract('dataset-uci.xlsx')
         print("Dataset downloaded and extracted successfully.")
         return True
@@ -35,10 +29,8 @@ def download_dataset():
         print(f"Error downloading dataset: {e}")
         return False
 
-# Load the dataset
 def load_dataset():
     try:
-        # First try with local file
         print("Trying to load local dataset...")
         data = pd.read_excel('dataset-uci.xlsx', engine='openpyxl')
         print("Local dataset loaded successfully.")
@@ -46,7 +38,6 @@ def load_dataset():
     except Exception as e:
         print(f"Error loading local dataset: {e}")
         
-        # Try downloading if local file fails
         if download_dataset():
             try:
                 data = pd.read_excel('dataset-uci.xlsx', engine='openpyxl')
@@ -55,7 +46,6 @@ def load_dataset():
             except Exception as e:
                 print(f"Error loading downloaded dataset: {e}")
         
-        # If all attempts fail, create a small sample dataset for testing
         print("Creating sample dataset for testing...")
         sample_data = pd.DataFrame({
             'Gallstone Status': [0, 1, 0, 1, 0],
@@ -66,10 +56,8 @@ def load_dataset():
         })
         return sample_data
 
-# Load the data
 data = load_dataset()
 
-# 1. Basic Information
 def show_basic_info(df):
     print("\n" + "="*50)
     print("DATASET BASIC INFORMATION")
@@ -89,26 +77,21 @@ def show_basic_info(df):
     else:
         print("No missing values found.")
     
-    # Show first 5 rows of data
     print("\nFirst 5 rows of data:")
     print(df.head())
 
-# 2. Statistical Summary
 def show_statistical_summary(df):
     print("\n" + "="*50)
     print("STATISTICAL SUMMARY")
     print("="*50)
     
-    # Compute summary statistics
     stats = df.describe().T
     stats['Range'] = stats['max'] - stats['min']
     stats['Coef of Variation'] = (stats['std'] / stats['mean']) * 100
     
-    # Format and display
     pd.set_option('display.float_format', '{:.2f}'.format)
     print(stats)
     
-    # Display categorical variable distributions if any exists
     categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
     if categorical_cols:
         print("\nCategorical Variable Distributions:")
@@ -116,14 +99,12 @@ def show_statistical_summary(df):
             print(f"\n{col}:")
             print(df[col].value_counts())
 
-# 3. Target Distribution (Gallstone Status)
 def plot_target_distribution(df):
     if 'Gallstone Status' in df.columns:
         plt.figure(figsize=(10, 6))
         counts = df['Gallstone Status'].value_counts()
         sns.countplot(x=df['Gallstone Status'], palette='viridis')
         
-        # Add count labels
         for i, count in enumerate(counts):
             plt.text(i, count + 5, f"{count}", ha='center', fontweight='bold')
         
@@ -134,21 +115,17 @@ def plot_target_distribution(df):
         plt.close()
         print("\nTarget distribution plot saved to 'figures/target_distribution.png'")
 
-# 4. Numeric Features Distribution
 def plot_numeric_distributions(df):
     numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
     
-    # Remove target from numeric columns if present
     if 'Gallstone Status' in numeric_cols:
         numeric_cols.remove('Gallstone Status')
     
-    # Skip if no numeric columns
     if not numeric_cols:
         print("No numeric columns to plot")
         return
     
-    # Plot histograms for numeric features
-    num_plots = min(len(numeric_cols), 9)  # Limit to max 9 features for readability
+    num_plots = min(len(numeric_cols), 9)
     cols_to_plot = numeric_cols[:num_plots]
     
     fig, axes = plt.subplots(3, 3, figsize=(20, 15))
@@ -161,7 +138,6 @@ def plot_numeric_distributions(df):
             axes[i].set_xlabel(col, fontsize=12)
             axes[i].set_ylabel('Frequency', fontsize=12)
             
-    # Hide unused subplots
     for j in range(i+1, len(axes)):
         axes[j].set_visible(False)
     
@@ -170,7 +146,6 @@ def plot_numeric_distributions(df):
     plt.close()
     print(f"\nNumeric distributions plot saved to 'figures/numeric_distributions.png'")
 
-# 5. Box Plots for Numeric Features by Target
 def plot_boxplots_by_target(df):
     if 'Gallstone Status' not in df.columns:
         print("Target column 'Gallstone Status' not found, skipping boxplots")
@@ -180,13 +155,11 @@ def plot_boxplots_by_target(df):
     if 'Gallstone Status' in numeric_cols:
         numeric_cols.remove('Gallstone Status')
     
-    # Skip if no numeric columns
     if not numeric_cols:
         print("No numeric columns to plot")
         return
     
-    # Select top features for boxplots
-    cols_to_plot = numeric_cols[:6]  # First 6 numeric features
+    cols_to_plot = numeric_cols[:6]
     
     fig, axes = plt.subplots(2, 3, figsize=(20, 12))
     axes = axes.flatten()
@@ -197,7 +170,6 @@ def plot_boxplots_by_target(df):
             axes[i].set_title(f'{col} by Gallstone Status', fontsize=14)
             axes[i].set_xlabel('Gallstone Status (0: Absent, 1: Present)', fontsize=12)
             
-    # Hide unused subplots
     for j in range(i+1, len(axes)):
         axes[j].set_visible(False)
     
@@ -206,11 +178,9 @@ def plot_boxplots_by_target(df):
     plt.close()
     print(f"\nBoxplots by target saved to 'figures/boxplots_by_target.png'")
 
-# 6. Correlation Analysis
 def plot_correlation_heatmap(df):
     numeric_df = df.select_dtypes(include=['int64', 'float64'])
     
-    # Skip if not enough numeric columns
     if numeric_df.shape[1] < 2:
         print("Not enough numeric columns for correlation analysis")
         return
@@ -229,7 +199,6 @@ def plot_correlation_heatmap(df):
     plt.close()
     print(f"\nCorrelation heatmap saved to 'figures/correlation_heatmap.png'")
 
-# 7. Gender-based Analysis
 def plot_gender_analysis(df):
     if 'Gender' not in df.columns or 'Gallstone Status' not in df.columns:
         print("Gender or Gallstone Status columns not found, skipping gender analysis")
@@ -249,7 +218,6 @@ def plot_gender_analysis(df):
     plt.close()
     print(f"\nGender analysis plot saved to 'figures/gender_gallstone_heatmap.png'")
 
-# 8. Age Distribution by Gallstone Status
 def plot_age_distribution(df):
     if 'Age' not in df.columns or 'Gallstone Status' not in df.columns:
         print("Age or Gallstone Status columns not found, skipping age distribution analysis")
@@ -269,7 +237,6 @@ def plot_age_distribution(df):
     plt.close()
     print(f"\nAge distribution plot saved to 'figures/age_distribution_by_target.png'")
 
-# 9. BMI Analysis if available
 def plot_bmi_analysis(df):
     if 'BMI' not in df.columns or 'Gallstone Status' not in df.columns:
         print("BMI or Gallstone Status columns not found, skipping BMI analysis")
@@ -288,22 +255,18 @@ def plot_bmi_analysis(df):
     plt.close()
     print(f"\nBMI analysis plot saved to 'figures/bmi_by_target.png'")
 
-# 10. Analysis of Comorbidities
 def plot_comorbidity_analysis(df):
     comorbidity_cols = ['Comorbidity', 'Coronary Artery Disease (CAD)', 
                          'Hypothyroidism', 'Hyperlipidemia', 'Diabetes Mellitus (DM)']
     
-    # Check if comorbidity columns exist
     existing_cols = [col for col in comorbidity_cols if col in df.columns]
     
     if not existing_cols or 'Gallstone Status' not in df.columns:
         print("Comorbidity or Gallstone Status columns not found, skipping comorbidity analysis")
         return
     
-    # Process only columns that exist
     fig, axes = plt.subplots(len(existing_cols), 1, figsize=(12, 4 * len(existing_cols)))
     
-    # Handle single subplot case
     if len(existing_cols) == 1:
         axes = [axes]
     
@@ -321,14 +284,11 @@ def plot_comorbidity_analysis(df):
     plt.close()
     print(f"\nComorbidity analysis plot saved to 'figures/comorbidity_analysis.png'")
 
-# 11. Pairplot for Selected Important Features
 def plot_pairplot(df):
-    # Select a few important features
     if 'Gallstone Status' not in df.columns:
         print("Target column 'Gallstone Status' not found, skipping pairplot")
         return
     
-    # Numeric columns that might be most important
     potential_cols = ['Age', 'BMI', 'Weight', 'Height']
     existing_cols = [col for col in potential_cols if col in df.columns]
     
@@ -336,7 +296,6 @@ def plot_pairplot(df):
         print("Not enough numeric columns for pairplot")
         return
     
-    # Select top 3-4 features for pairplot (to keep it readable)
     cols_to_plot = existing_cols[:min(4, len(existing_cols))] + ['Gallstone Status']
     
     plt.figure(figsize=(16, 14))
@@ -349,14 +308,12 @@ def plot_pairplot(df):
     plt.close()
     print(f"\nPairplot saved to 'figures/feature_pairplot.png'")
 
-# 12. Feature Importance
 def plot_feature_importance(df):
     if 'Gallstone Status' not in df.columns:
         print("Target column 'Gallstone Status' not found, skipping feature importance")
         return
     
     try:
-        # Simple feature importance based on correlation with target
         numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
         if 'Gallstone Status' in numeric_cols:
             numeric_cols.remove('Gallstone Status')
@@ -365,7 +322,6 @@ def plot_feature_importance(df):
             print("No numeric columns for feature importance")
             return
         
-        # Calculate absolute correlation with target
         correlations = df[numeric_cols].corrwith(df['Gallstone Status']).abs().sort_values(ascending=False)
         
         plt.figure(figsize=(12, 8))
@@ -381,7 +337,6 @@ def plot_feature_importance(df):
     except Exception as e:
         print(f"Error in feature importance analysis: {e}")
 
-# Run all analysis functions
 show_basic_info(data)
 show_statistical_summary(data)
 plot_target_distribution(data)

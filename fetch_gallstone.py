@@ -6,27 +6,23 @@ import numpy as np
 import os
 import sys
 
-# Create figures directory if it doesn't exist
 os.makedirs('figures', exist_ok=True)
 
-# Print Python and package versions for debugging
+
 print(f"Python version: {sys.version}")
 print(f"pandas version: {pd.__version__}")
 
 try:
-    # Fetch the Gallstone dataset directly from UCI repository
     print("Fetching Gallstone dataset from UCI repository...")
     gallstone = fetch_ucirepo(id=1150)
     
-    # Print metadata
     print("\nDataset metadata:")
     print(gallstone.metadata)
     
-    # Extract the data as pandas dataframes
     X = gallstone.data.features 
     y = gallstone.data.targets
     
-    # Combine features and target into a single DataFrame
+
     data = pd.concat([X, y], axis=1)
     
     # Print basic information about the dataset
