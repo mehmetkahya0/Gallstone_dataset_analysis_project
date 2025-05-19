@@ -68,6 +68,9 @@ Safra taşı varlığı ile diğer değişkenler arasındaki ilişkinin gücün�
 
 ## 4. Değerlendirme ve Öneriler
 
+### Karar Ağacı Görselleştirilmesi
+![decision_tree](figures/decision_tree.png)
+
 ### 4.1. Bulguların Özeti
 - Yaş ve kilo, safra taşı hastalığında en belirleyici değişkenlerdir.
 - Kadın bireylerde safra taşı görülme oranı belirgin şekilde yüksektir.
