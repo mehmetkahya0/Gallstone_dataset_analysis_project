@@ -55,6 +55,15 @@ Bu durum, biyolojik ve hormonal farklılıkların etkili olduğunu düşündürm
 ![Sayısal Dağılım](figures/numeric_distributions.png)
 📈 Yaş ve kilo değişkenleri pozitif çarpıklık göstermektedir. Bu durum, ön işleme (örneğin log dönüşümü) gerektirebilir.
 
+### 3.7. Komorbidite Analizi Grafiği
+![Komorbidite Analizi](figures/comorbidity_analysis.png)
+
+
+### 3.8. Safra Taşı ile Değişkenler Arasındaki Korelasyon Grafiği
+![feature_importance](figures/feature_importance.png)
+Safra taşı varlığı ile diğer değişkenler arasındaki ilişkinin gücünü mutlak korelasyon katsayıları ile göstermektedir. En yüksek korelasyona sahip ilk 15 değişken, safra taşı oluşumunda potansiyel olarak en etkili faktörleri belirlemek amacıyla görselleştirilmiştir.
+
+
 ---
 
 ## 4. Değerlendirme ve Öneriler
