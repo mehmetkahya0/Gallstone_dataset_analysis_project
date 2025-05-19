@@ -9,6 +9,12 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier, plot_tree
+import datetime
+
+# Log dosyasını temizle ve başlık ekle
+with open("algorithms_result.txt", "w", encoding="utf-8") as log_file:
+    log_file.write(f"=== Safra Taşı Veri Seti Algoritma Sonuçları ===\n")
+    log_file.write(f"Çalıştırma Tarihi: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
 
 # Veriyi oku
 data = pd.read_csv("dataset-uci.csv")  # Dosya yolunu projeye göre ayarla
@@ -37,12 +43,21 @@ X_test_scaled = scaler.transform(X_test)
 
 # Değerlendirme fonksiyonu
 def evaluate_model(name, y_true, y_pred):
+    # Ekrana yazdır
     print(f"\n{name} Sonuçları:")
     print("Accuracy:", accuracy_score(y_true, y_pred))
     print("Precision:", precision_score(y_true, y_pred))
     print("Recall:", recall_score(y_true, y_pred))
     print("F1 Score:", f1_score(y_true, y_pred))
     print("\nClassification Report:\n", classification_report(y_true, y_pred))
+      # Log dosyasına kaydet
+    with open("algorithms_result.txt", "a", encoding="utf-8") as log_file:
+        log_file.write(f"\n{name} Sonuçları:\n")
+        log_file.write(f"Accuracy: {accuracy_score(y_true, y_pred)}\n")
+        log_file.write(f"Precision: {precision_score(y_true, y_pred)}\n")
+        log_file.write(f"Recall: {recall_score(y_true, y_pred)}\n")
+        log_file.write(f"F1 Score: {f1_score(y_true, y_pred)}\n")
+        log_file.write(f"\nClassification Report:\n{classification_report(y_true, y_pred)}\n")
 
 # Naive Bayes
 nb_model = GaussianNB()
@@ -68,3 +83,32 @@ plot_tree(dt_model, feature_names=X.columns, class_names=['No', 'Yes'], filled=T
 plt.title("Karar Ağacı Görselleştirmesi")
 plt.savefig("figures/decision_tree.png")
 plt.show()
+
+# Log dosyasına özet bilgileri ekle
+with open("algorithms_result.txt", "a", encoding="utf-8") as log_file:
+    log_file.write("\n" + "="*50 + "\n")
+    log_file.write("ÖZET KARŞILAŞTIRMA\n")
+    log_file.write("="*50 + "\n")
+    log_file.write(f"Veri seti boyutu: {data.shape}\n")
+    log_file.write(f"Eğitim seti boyutu: {X_train.shape}\n")
+    log_file.write(f"Test seti boyutu: {X_test.shape}\n\n")
+    log_file.write("En iyi performans gösteren model:\n")
+    
+    # En iyi modeli bul
+    acc_nb = accuracy_score(y_test, y_pred_nb)
+    acc_knn = accuracy_score(y_test, y_pred_knn)
+    acc_dt = accuracy_score(y_test, y_pred_dt)
+    
+    if acc_nb >= acc_knn and acc_nb >= acc_dt:
+        best_model = "Naive Bayes"
+        best_acc = acc_nb
+    elif acc_knn >= acc_nb and acc_knn >= acc_dt:
+        best_model = "kNN"
+        best_acc = acc_knn
+    else:
+        best_model = "Karar Ağacı"
+        best_acc = acc_dt
+    
+    log_file.write(f"{best_model} (Accuracy: {best_acc:.4f})\n\n")
+    
+print("\nAlgoritma sonuçları 'algorithms_result.txt' dosyasına kaydedildi.")
