@@ -5,7 +5,7 @@ import numpy as np
 import os
 from zipfile import ZipFile
 from io import BytesIO
-import requests
+
 
 def tr_title(title):
     return title
@@ -14,8 +14,13 @@ plt.style.use('ggplot')
 sns.set(font_scale=1.2)
 sns.set_style("whitegrid")
 
-os.makedirs('figures', exist_ok=True)
+os.makedirs('graphs', exist_ok=True)
 
+data = pd.read_csv("dataset-uci.csv")  # Dosya yolunu projeye göre ayarla
+
+
+
+"""This script performs exploratory data analysis (EDA) on a dataset related to gallstones.
 def download_dataset():
     try:
         print("Attempting to download the dataset from UCI repository...")
@@ -57,7 +62,7 @@ def load_dataset():
         return sample_data
 
 data = load_dataset()
-
+"""
 def show_basic_info(df):
     print("\n" + "="*50)
     print("DATASET BASIC INFORMATION")
