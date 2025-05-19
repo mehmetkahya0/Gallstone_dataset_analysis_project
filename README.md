@@ -1,5 +1,7 @@
 # 🩺 Safra Taşı Hastalığı (Gallstone-1) Veri Seti Analizi
 
+> [!IMPORTANT]  
+> Bu proje Veri Bilime Giriş Dersi için hazırlanmıştır.
 ## 1. Giriş
 
 Safra taşı hastalığı (*cholelithiasis*), dünya genelinde sık karşılaşılan bir gastrointestinal bozukluktur. Geleneksel tanı yöntemleri (USG, BT, MRG) hem yüksek maliyetlidir hem de bazı hasta gruplarında sınırlı doğruluk sağlayabilir. Bu sebeple, alternatif ve maliyeti düşük tanı yöntemlerinin geliştirilmesi büyük önem taşımaktadır.
