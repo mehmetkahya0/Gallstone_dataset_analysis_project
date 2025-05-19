@@ -1,5 +1,5 @@
 === Safra Taşı Veri Seti Algoritma Sonuçları ===
-Çalıştırma Tarihi: 2025-05-19 22:45:49
+Çalıştırma Tarihi: 2025-05-20 02:18:30
 
 
 Naive Bayes Sonuçları:
@@ -37,29 +37,18 @@ weighted avg       0.48      0.48      0.47        64
 
 
 Karar Ağacı Sonuçları:
-Accuracy: 0.71875
-Precision: 0.7241379310344828
-Recall: 0.6774193548387096
-F1 Score: 0.7
+Accuracy: 0.734375
+Precision: 0.8181818181818182
+Recall: 0.5806451612903226
+F1 Score: 0.6792452830188679
 
 Classification Report:
               precision    recall  f1-score   support
 
-         0.0       0.71      0.76      0.74        33
-         1.0       0.72      0.68      0.70        31
+         0.0       0.69      0.88      0.77        33
+         1.0       0.82      0.58      0.68        31
 
-    accuracy                           0.72        64
-   macro avg       0.72      0.72      0.72        64
-weighted avg       0.72      0.72      0.72        64
-
-
-==================================================
-ÖZET KARŞILAŞTIRMA
-==================================================
-Veri seti boyutu: (319, 39)
-Eğitim seti boyutu: (255, 38)
-Test seti boyutu: (64, 38)
-
-En iyi performans gösteren model:
-Karar Ağacı (Accuracy: 0.7188)
+    accuracy                           0.73        64
+   macro avg       0.75      0.73      0.73        64
+weighted avg       0.75      0.73      0.73        64
 

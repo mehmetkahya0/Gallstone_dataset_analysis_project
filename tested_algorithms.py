@@ -71,18 +71,63 @@ knn_model.fit(X_train_scaled, y_train)
 y_pred_knn = knn_model.predict(X_test_scaled)
 evaluate_model("kNN", y_test, y_pred_knn)
 
-# Karar Ağacı
-dt_model = DecisionTreeClassifier(random_state=42)
+# Karar Ağacı - Daha sınırlı derinlik için
+dt_model = DecisionTreeClassifier(random_state=42, max_depth=4)  # Daha sınırlı derinlik için max_depth=4 ayarı
 dt_model.fit(X_train, y_train)
 y_pred_dt = dt_model.predict(X_test)
 evaluate_model("Karar Ağacı", y_test, y_pred_dt)
 
-# Karar ağacı görselleştir
+# Karar ağacını daha okunaklı görselleştirme 
 plt.figure(figsize=(20, 10))
-plot_tree(dt_model, feature_names=X.columns, class_names=['No', 'Yes'], filled=True)
-plt.title("Karar Ağacı Görselleştirmesi")
-plt.savefig("figures/decision_tree.png")
+plot_tree(dt_model, feature_names=X.columns, class_names=['No', 'Yes'], 
+          filled=True, fontsize=14, rounded=True, proportion=True,
+          precision=2)  # Precision parametresi ile sayıları sadeleştir
+plt.title("Karar Ağacı Görselleştirmesi", fontsize=18)
+
+# Yüksek çözünürlükte kaydet ve uygun ayarlar ile kaydet
+plt.savefig("figures/decision_tree.png", dpi=300, bbox_inches='tight')
+plt.tight_layout()
 plt.show()
+
+# Ayrı ağaç görselleştirmeleri için yeni bir yaklaşım
+# Her bir ağaç seviyesini ayrı ayrı görselleştirme
+for depth in range(1, dt_model.get_depth() + 1):
+    plt.figure(figsize=(16, 8))
+    plt.suptitle(f"Karar Ağacı Seviye {depth}", fontsize=16)
+    plot_tree(dt_model, feature_names=X.columns, class_names=['No', 'Yes'],
+              filled=True, fontsize=14, rounded=True, proportion=True,
+              max_depth=depth)  # Sadece belirli bir derinliğe kadar göster
+    plt.tight_layout()
+    plt.savefig(f"figures/decision_tree_depth_{depth}.png", dpi=300, bbox_inches='tight')
+    plt.show()
+
+# İnteraktif görselleştirme için farklı bir yaklaşım
+try:
+    # İnteraktif karar ağacı görünümü oluştur
+    import graphviz
+    from sklearn import tree
+    
+    dot_data = tree.export_graphviz(dt_model, out_file=None, 
+                            feature_names=X.columns,
+                            class_names=['No', 'Yes'],
+                            filled=True, rounded=True, proportion=True, 
+                            special_characters=True, precision=2)
+    
+    # Graphviz DOT dosyasını oluştur
+    with open("figures/decision_tree.dot", "w") as f:
+        f.write(dot_data)
+    
+    # DOT dosyasını HTML formatına dönüştür (interaktif görüntüleme için)
+    graph = graphviz.Source(dot_data)
+    graph.render("figures/decision_tree_interactive", format="pdf", view=True)
+    
+    print("\nInteraktif karar ağacı görselleştirmeleri 'figures' klasörüne kaydedildi.")
+    print("Karar ağacı seviyeleri ayrı ayrı görselleştirildi.")
+    
+except ImportError:
+    print("\nÖNERİ: Daha iyi interaktif görselleştirme için 'graphviz' paketini yükleyebilirsiniz:")
+    print("pip install graphviz")
+    print("Ayrıca Graphviz'in sisteme kurulu olması gerekmektedir: https://graphviz.org/download/")
 
 # Log dosyasına özet bilgileri ekle
 with open("algorithms_result.txt", "a", encoding="utf-8") as log_file:
