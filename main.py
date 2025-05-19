@@ -14,7 +14,7 @@ plt.style.use('ggplot')
 sns.set(font_scale=1.2)
 sns.set_style("whitegrid")
 
-os.makedirs('graphs', exist_ok=True)
+os.makedirs('figures', exist_ok=True)
 
 data = pd.read_csv("dataset-uci.csv")  # Dosya yolunu projeye göre ayarla
 
